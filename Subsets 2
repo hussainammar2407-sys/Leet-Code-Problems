@@ -1,0 +1,49 @@
+#include <stdlib.h>
+
+/**
+ * Return an array of arrays and columnSizes as required by LeetCode.
+ */
+
+int** result;
+int* colSizes;
+int resultCount;
+int current[100];   // max size = 100
+
+void backtrack(int* nums, int numsSize, int start, int currLen) {
+    // store current subset
+    int* subset = malloc(currLen * sizeof(int));
+    for (int i = 0; i < currLen; i++) subset[i] = current[i];
+
+    result[resultCount] = subset;
+    colSizes[resultCount] = currLen;
+    resultCount++;
+
+    for (int i = start; i < numsSize; i++) {
+        if (i > start && nums[i] == nums[i - 1]) continue;
+
+        current[currLen] = nums[i];
+        backtrack(nums, numsSize, i + 1, currLen + 1);
+    }
+}
+
+int cmp(const void* a, const void* b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int** subsetsWithDup(int* nums, int numsSize, int* returnSize, int** returnColumnSizes) {
+    // maximum subsets = 2^n
+    int maxSets = 1 << numsSize;
+
+    result = malloc(maxSets * sizeof(int*));
+    colSizes = malloc(maxSets * sizeof(int));
+    resultCount = 0;
+
+    qsort(nums, numsSize, sizeof(int), cmp);
+
+    backtrack(nums, numsSize, 0, 0);
+
+    *returnSize = resultCount;
+    *returnColumnSizes = colSizes;
+
+    return result;
+}
