@@ -1,0 +1,45 @@
+#include <stdbool.h>
+#include <string.h>
+
+bool dfs(char** board, int boardSize, int* boardColSize,
+         int r, int c, char* word, int index) {
+
+    // All chars matched → found the word
+    if (word[index] == '\0')
+        return true;
+
+    // Bounds check
+    if (r < 0 || c < 0 || r >= boardSize || c >= boardColSize[r])
+        return false;
+
+    // Character mismatch
+    if (board[r][c] != word[index])
+        return false;
+
+    // Mark this cell visited by temporarily changing char
+    char temp = board[r][c];
+    board[r][c] = '#';
+
+    // Explore 4 directions
+    bool found =
+        dfs(board, boardSize, boardColSize, r+1, c, word, index+1) ||
+        dfs(board, boardSize, boardColSize, r-1, c, word, index+1) ||
+        dfs(board, boardSize, boardColSize, r, c+1, word, index+1) ||
+        dfs(board, boardSize, boardColSize, r, c-1, word, index+1);
+
+    // Restore original character
+    board[r][c] = temp;
+
+    return found;
+}
+
+bool exist(char** board, int boardSize, int* boardColSize, char* word) {
+    for (int r = 0; r < boardSize; r++) {
+        for (int c = 0; c < boardColSize[r]; c++) {
+            if (dfs(board, boardSize, boardColSize, r, c, word, 0))
+                return true;
+        }
+    }
+
+    return false;
+}
