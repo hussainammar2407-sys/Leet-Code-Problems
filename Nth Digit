@@ -1,0 +1,23 @@
+int findNthDigit(int n) {
+    long long digitLen = 1;
+    long long count = 9;
+    long long start = 1;
+
+    // Step 1: find digit length group
+    while (n > digitLen * count) {
+        n -= digitLen * count;
+        digitLen++;
+        count *= 10;
+        start *= 10;
+    }
+
+    // Step 2: find the actual number
+    start += (n - 1) / digitLen;
+
+    // Step 3: find the digit in the number
+    int digitIndex = (n - 1) % digitLen;
+    while (digitIndex--)
+        start /= 10;
+
+    return start % 10;
+}
